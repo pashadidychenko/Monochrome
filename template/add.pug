@@ -1,0 +1,25 @@
+div
+h1 Add Product
+form(action='/add' method='post')
+        label Name
+        br
+        input(type='text' name='name')
+        br
+        p
+          select(name='category')
+            option Category-1
+            option Category-2
+            option Category-3
+            option Category-4
+            option Category-5
+        label Price
+        br
+        input(type='number' name='price' step=0.01)
+        br
+        label Summary
+        br
+        input(type='number' name='summary' step=0.01)
+        br
+        input(type='submit' value='Add Product')
+        br
+        br

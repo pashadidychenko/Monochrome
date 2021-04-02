@@ -1,0 +1,26 @@
+{
+  "name": "monochrome",
+  "version": "1.0.0",
+  "description": "test task for monochrome",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "pasha didychenko",
+  "license": "MIT",
+  "dependencies": {
+    "koa": "^2.11.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-ejs": "^4.3.0",
+    "koa-logger": "^3.2.1",
+    "koa-router": "^8.0.8",
+    "koa-views": "^7.0.1",
+    "koa2": "*",
+    "mongodb": "^3.6.5",
+    "mongoose": "^5.12.2",
+    "nodemon": "^2.0.7",
+    "pug": "^3.0.2"
+  }
+}

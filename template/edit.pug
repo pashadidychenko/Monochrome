@@ -1,0 +1,26 @@
+div
+h1 Edit Product
+form(action=`/update/${_id}` method='post')
+        label Name
+        br
+        input(type='text' name='name' value=name)
+        br
+        p
+          select(name='category')
+            option=category
+            option Category-1
+            option Category-2
+            option Category-3
+            option Category-4
+            option Category-5
+        label Price
+        br
+        input(type='number' name='price' value=price step=0.01)
+        br
+        label Summary
+        br
+        input(type='number' name='summary' value=summary step=0.01)
+        br
+        input(type='submit' value='Edit Product')
+        br
+        br

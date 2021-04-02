@@ -1,0 +1,21 @@
+a(href='/' style='border: 2px solid black; padding: 10px') Home Page
+h1 Statistics
+div
+        table(style='width:100%', border='1')
+         tr
+          th Category
+          th Average Cost
+          th Quantity
+          th Summary Price
+          th Max Price
+          th Min Price
+         tr
+         tr
+          each val in statistic
+           td=val.category
+           td=val.average
+           td=val.quantity
+           td=val.summaryPrice
+           td=val.maxPrice
+           td=val.minPrice
+           tr
