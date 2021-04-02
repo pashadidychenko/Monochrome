@@ -16,6 +16,8 @@ const {
   updateProduct,
 } = require("./api/product.controllers");
 
+require("dotenv").config();
+
 if (cluster.isMaster) {
   for (var i = 0; i < numCPUs; i++) {
     cluster.fork();
@@ -53,16 +55,16 @@ if (cluster.isMaster) {
   mongoose.Promise = Promise;
   mongoose.set("debug", true);
   mongoose
-    .connect(
-      "mongodb+srv://nodeAdmin:Mhm9HD9OozVLrkG6@cluster0.2q0jf.mongodb.net/products?authSource=admin&replicaSet=atlas-11c4fw-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true",
-      { useUnifiedTopology: true, useNewUrlParser: true }
-    )
+    .connect(process.env.URI, {
+      useUnifiedTopology: true,
+      useNewUrlParser: true,
+    })
     .catch((error) => {
       console.log(error);
       process.exit(1);
     });
 
-  app.listen(3000, () =>
-    console.log(`Server running on http://localhost:3000`)
+  app.listen(process.env.PORT, () =>
+    console.log(`Server running on http://localhost:${process.env.PORT}`)
   );
 }

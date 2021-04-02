@@ -11,6 +11,7 @@
   "author": "pasha didychenko",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.3.0",
     "koa-ejs": "^4.3.0",

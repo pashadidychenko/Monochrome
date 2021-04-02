@@ -67,7 +67,6 @@ async function updateProduct(ctx, next) {
 }
 
 async function deleteProduct(ctx, next) {
-  console.log("ctx", ctx);
   let _id = ctx.params.id;
   if (!_id) {
     ctx.status = 400;
