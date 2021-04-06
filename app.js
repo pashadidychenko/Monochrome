@@ -7,13 +7,16 @@ const views = require("koa-views");
 const mongoose = require("mongoose");
 const cluster = require("cluster");
 const numCPUs = require("os").cpus().length;
+let methodOverride = require("koa-methodoverride");
 const {
   greatTable,
   greatStatistic,
   addNewProduct,
   deleteProduct,
-  editProduct,
+  getProductById,
   updateProduct,
+  validateProduct,
+  checkDataExist,
 } = require("./api/product.controllers");
 
 require("dotenv").config();
@@ -34,8 +37,8 @@ if (cluster.isMaster) {
 } else {
   const app = new Kao();
   const router = new Router();
+  app.use(methodOverride("_method"));
   app.use(bodyParser());
-
   app.use(logger());
   app.use(
     views(path.resolve(__dirname, "template"), {
@@ -45,10 +48,10 @@ if (cluster.isMaster) {
 
   router.get("/", greatTable);
   router.get("/statistic", greatStatistic);
-  router.post("/add", addNewProduct);
-  router.post("/delete/:id", deleteProduct);
-  router.post("/edit/:params", editProduct);
-  router.post("/update/:id", updateProduct);
+  router.post("/add", checkDataExist, validateProduct, addNewProduct);
+  router.delete("/:id", deleteProduct);
+  router.get("/edit/:id", getProductById);
+  router.patch("/update/:id", checkDataExist, validateProduct, updateProduct);
 
   app.use(router.routes());
 
@@ -58,6 +61,7 @@ if (cluster.isMaster) {
     .connect(process.env.URI, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
+      useFindAndModify: false,
     })
     .catch((error) => {
       console.log(error);

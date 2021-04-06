@@ -1,6 +1,6 @@
 div
 h1 Edit Product
-form(action=`/update/${_id}` method='post')
+form(action=`/update/${id}?_method=patch` method='post')
         label Name
         br
         input(type='text' name='name' value=name)

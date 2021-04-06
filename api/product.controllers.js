@@ -1,3 +1,4 @@
+const Joi = require("joi");
 const productModel = require("./product.model");
 const getStatistic = require("./product.helpers");
 
@@ -27,56 +28,101 @@ async function greatStatistic(ctx) {
 async function addNewProduct(ctx, next) {
   try {
     ctx.status = 200;
-    ctx.body = await productModel.create(ctx.request.body);
-    ctx.redirect("/");
+    await productModel.create(ctx.request.body);
   } catch (err) {
+    console.log("5");
     ctx.status = 400;
-    console.log(err);
-    ctx.redirect("/");
+    ctx.body = err;
   }
 }
-async function editProduct(ctx, next) {
-  await ctx.render("edit", JSON.parse(ctx.params.params));
+
+function validateProduct(ctx, next) {
+  const createProducttRules = Joi.object({
+    name: Joi.string().required(),
+    category: Joi.string().required(),
+    price: Joi.number().required(),
+    summary: Joi.number().required(),
+  });
+  const result = createProducttRules.validate(ctx.request.body);
+  if (result.error) {
+    ctx.status = 400;
+    ctx.body = result.error.details;
+    return;
+  }
+  next();
+}
+
+async function getProductById(ctx, next) {
+  try {
+    let _id = ctx.params.id;
+    if (!_id) {
+      ctx.status = 400;
+      ctx.body = { message: "bad request params" };
+      return;
+    }
+    let product = await productModel.findById(_id);
+    if (!product) {
+      ctx.status = 404;
+      ctx.body = { message: "can not find product" };
+      return;
+    }
+    console.log(product);
+    await ctx.render("edit", {
+      id: product._id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      summary: product.summary,
+    });
+  } catch (err) {
+    ctx.status = 400;
+    ctx.body = err;
+  }
 }
 
 async function updateProduct(ctx, next) {
-  const requestProduct = ctx.request.body;
-  let _id = ctx.params.id;
-  if (!_id) {
-    ctx.status = 400;
-    ctx.body = "bad request params";
+  try {
+    const product = await productModel.findByIdAndUpdate(ctx.params.id, {
+      $set: ctx.request.body,
+    });
+    if (!product) {
+      ctx.status = 404;
+      ctx.body = { message: "product not found" };
+      return;
+    }
+    ctx.status = 200;
+    ctx.body = { message: "product update" };
     return;
+  } catch (err) {
+    next(err);
   }
-
-  let product = await productModel.findById(_id);
-  if (!product) {
-    ctx.status = 404;
-    ctx.body = "can not find such category";
-    return;
-  }
-
-  if (requestProduct.name) product.name = requestProduct.name;
-  if (requestProduct.category) product.category = requestProduct.category;
-  if (requestProduct.price) product.price = requestProduct.price;
-  if (requestProduct.summary) product.summary = requestProduct.summary;
-
-  let result = await product.save();
-  if (result) ctx.body = result;
-  else ctx.body = "update category fail";
-  ctx.redirect("/");
 }
 
 async function deleteProduct(ctx, next) {
-  let _id = ctx.params.id;
-  if (!_id) {
+  try {
+    let _id = ctx.params.id;
+    if (!_id) {
+      ctx.status = 400;
+      ctx.body = { message: "bad request params" };
+      return;
+    }
+    let result = await productModel.findByIdAndDelete({ _id });
+    result
+      ? await ctx.render("message", { message: "product delete" })
+      : await ctx.render("message", { message: "product not found" });
+  } catch (err) {
     ctx.status = 400;
-    ctx.body = "bad request params";
+    ctx.body = err;
+  }
+}
+
+function checkDataExist(ctx, next) {
+  if (Object.keys(ctx.request.body).length === 0) {
+    ctx.status = 400;
+    ctx.body = { message: "missing fields" };
     return;
   }
-  let result = await productModel.findByIdAndDelete({ _id });
-  if (result) ctx.body = "product delete";
-  else ctx.body = "delete product fail";
-  ctx.redirect("/");
+  next();
 }
 
 module.exports = {
@@ -84,6 +130,8 @@ module.exports = {
   greatStatistic,
   addNewProduct,
   deleteProduct,
-  editProduct,
   updateProduct,
+  validateProduct,
+  checkDataExist,
+  getProductById,
 };
