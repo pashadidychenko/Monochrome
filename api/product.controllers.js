@@ -66,7 +66,6 @@ async function getProductById(ctx, next) {
       ctx.body = { message: "can not find product" };
       return;
     }
-    console.log(product);
     await ctx.render("edit", {
       id: product._id,
       name: product.name,
@@ -82,17 +81,19 @@ async function getProductById(ctx, next) {
 
 async function updateProduct(ctx, next) {
   try {
-    const product = await productModel.findByIdAndUpdate(ctx.params.id, {
-      $set: ctx.request.body,
-    });
+    const product = await productModel.findByIdAndUpdate(
+      ctx.params.id,
+      {
+        $set: ctx.request.body,
+      },
+      { new: true }
+    );
     if (!product) {
       ctx.status = 404;
       ctx.body = { message: "product not found" };
       return;
     }
-    ctx.status = 200;
-    ctx.body = { message: "product update" };
-    return;
+    ctx.body = { message: "product not found" };
   } catch (err) {
     next(err);
   }

@@ -57,6 +57,7 @@ if (cluster.isMaster) {
 
   mongoose.Promise = Promise;
   mongoose.set("debug", true);
+  mongoose.set("returnOriginal", true);
   mongoose
     .connect(process.env.URI, {
       useUnifiedTopology: true,
